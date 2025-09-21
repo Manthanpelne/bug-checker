@@ -1,0 +1,113 @@
+import React, { useState } from 'react';
+import { login } from '../utils/api';
+import { storeAuth } from '../utils/auth';
+
+const Login = ({ onLogin, onSwitchToRegister }) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const response = await login(formData);
+      storeAuth(response.token, response.user);
+      onLogin(response.user);
+      console.log('Login attempt with:', formData);
+      // Simulate API call
+      setTimeout(() => {
+        setLoading(false);
+        onLogin({ username: 'Test User' });
+      }, 1000);
+    } catch (err) {
+      setError(err.message || 'Login failed');
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <div className="flex flex-col items-center min-h-screen justify-center p-4 bg-slate-50">
+      <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm border border-gray-200" onSubmit={handleSubmit}>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-8 text-center">Bug Tracker Login</h1>
+        
+        {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
+        
+        <div className="mb-6">
+          <label className="block mb-2 font-medium text-gray-800">Email</label>
+          <input
+            type="email"
+            name="email"
+            className="w-full px-4 py-3 border border-gray-300 rounded-md text-base transition-colors duration-200 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block mb-2 font-medium text-gray-800">Password</label>
+          <div className="flex items-center gap-2">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md text-base transition-colors duration-200 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              className="p-2 text-gray-600 hover:text-gray-800"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              ) : (
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 -2 24 24"><path fill="currentColor" d="m15.398 7.23l1.472-1.472C18.749 6.842 20 8.34 20 10c0 3.314-4.958 5.993-10 6a14.7 14.7 0 0 1-3.053-.32l1.747-1.746q.64.067 1.303.066h.002c-.415 0-.815-.063-1.191-.18l1.981-1.982c.47-.202.847-.579 1.05-1.049l1.98-1.981A4 4 0 0 1 10.022 14C14.267 13.985 18 11.816 18 10c0-.943-1.022-1.986-2.602-2.77m-9.302 3.645A4 4 0 0 1 9.993 6C5.775 5.985 2 8.178 2 10c0 .896.904 1.877 2.327 2.644L2.869 14.1C1.134 13.028 0 11.585 0 10c0-3.314 4.984-6.017 10-6c.914.003 1.827.094 2.709.262l-1.777 1.776q-.435-.033-.88-.038q.424.007.823.096l-4.78 4.779zM19.092.707a1 1 0 0 1 0 1.414l-16.97 16.97a1 1 0 1 1-1.415-1.413L17.677.708a1 1 0 0 1 1.415 0z"/></svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          className={`w-full px-6 py-3 bg-blue-600 text-white rounded-md font-medium cursor-pointer transition-colors duration-200 hover:bg-blue-700 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+      </form>
+
+      <div className="text-center mt-4 text-sm text-gray-600">
+        Don't have an account?{' '}
+        <button
+          type="button"
+          className="text-blue-600 hover:underline cursor-pointer"
+          onClick={onSwitchToRegister}
+        >
+          Register here
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default Login;
