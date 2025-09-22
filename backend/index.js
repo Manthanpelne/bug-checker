@@ -1,6 +1,6 @@
 
 const express = require("express")
-const connection = require("./database/db")
+const connection = require("./database/db.js")
 const authRoute = require("./routes/auth.js")
 const bugsRoute = require("./routes/bugs.js")
 const cors = require("cors")
