@@ -18,22 +18,19 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
     try {
       const response = await login(formData);
       storeAuth(response.token, response.user);
       onLogin(response.user);
-      console.log('Login attempt with:', formData);
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        onLogin({ username: 'Test User' });
-      }, 1000);
     } catch (err) {
       setError(err.message || 'Login failed');
+    } finally {
       setLoading(false);
     }
   };
