@@ -73,7 +73,7 @@ updateBug = async (req,res) => {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    const updatedBug = await Bug.update(id, { status });
+    const updatedBug = await Bug.findByIdAndUpdate(id, { status });
     res.json(updatedBug);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

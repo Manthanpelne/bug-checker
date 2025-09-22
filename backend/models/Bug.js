@@ -4,15 +4,11 @@ const bug = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    minLength: 5,
-    maxLength: 200
   },
   
   description: {
     type: String,
     required: true,
-    minLength: 10,
-    maxLength: 2000
   },
   
   severity: {
